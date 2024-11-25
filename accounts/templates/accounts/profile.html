@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<style>
+    .profile-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+    }
+
+    .profile-box {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 40px;
+        width: 100%;
+        max-width: 800px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-title {
+        text-align: center;
+        color: #333;
+        font-size: 1.75rem;
+        margin-bottom: 30px;
+    }
+
+    .profile-details {
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .profile-details .detail-item {
+        margin-bottom: 20px;
+    }
+
+    .profile-details .detail-item span {
+        font-weight: bold;
+    }
+
+    .profile-actions {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .profile-actions .btn-primary {
+        background-color: #00796b;
+        color: white;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        text-decoration: none;
+    }
+
+    .profile-actions .btn-primary:hover {
+        background-color: #004d40;
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-box">
+        <h2 class="profile-title">Личный кабинет</h2>
+        <div class="profile-details">
+            <div class="detail-item">
+                <span>Логин:</span> {{ user.username }}
+            </div>
+            <div class="detail-item">
+                <span>Email:</span> {{ user.email }}
+            </div>
+        </div>
+        <div class="profile-actions">
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">Выйти</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

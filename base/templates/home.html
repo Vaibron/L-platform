@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<!-- Стили только для главной страницы -->
+<style>
+    .course-image {
+        border-radius: 15px; /* Скругление углов изображения */
+        object-fit: cover; /* Заполнение контейнера, сохраняя пропорции */
+    }
+
+    .hero {
+        margin-bottom: 20px;
+    }
+
+    /* Стиль для карточек */
+    .team-card {
+        border-radius: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        height: 250px; /* Фиксированная высота для всех карточек */
+        width: 200px; /* Увеличенная ширина для карточек */
+        background-color: #f9f9f9; /* Легкий фон для карточек */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        margin-bottom: 20px; /* Отступ снизу, чтобы карточки не прилипали друг к другу */
+        margin-right: 20px; /* Отступ справа */
+        flex-shrink: 0; /* Запрещаем сжатие карточек */
+    }
+
+    .team-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .team-photo {
+        width: 120px; /* Средний размер фото */
+        height: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+        overflow: hidden;
+        border-radius: 50%; /* Круглое фото */
+    }
+
+    .team-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Заполнение контейнера с сохранением пропорций */
+        object-position: center; /* Центрируем изображение внутри контейнера */
+    }
+
+    .team-card .card-body {
+        padding: 0;
+        text-align: center;
+    }
+
+    .team-card .card-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+        color: #333;
+    }
+
+    /* Добавление стиля для профессии */
+    .team-card .card-profession {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 10px;
+        font-style: italic;
+    }
+
+    /* Стиль для блока "Присоединяйтесь" */
+    .join-us {
+        background-color: #e9f7fa;
+        padding: 40px 20px;
+        border-radius: 8px;
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    .join-us h3 {
+        font-size: 2rem;
+        color: #00796b;
+        margin-bottom: 20px;
+    }
+
+    .join-us p {
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 30px;
+    }
+
+    .join-us .btn {
+        font-size: 1.1rem;
+        background-color: #00796b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .join-us .btn:hover {
+        background-color: #004d40;
+    }
+
+    /* Контейнер для карточек */
+    .team-cards-container {
+        display: flex;
+        overflow-x: auto; /* Добавляем прокрутку по горизонтали */
+        gap: 20px; /* Отступ между карточками */
+        padding-bottom: 20px; /* Отступ снизу для прокрутки */
+    }
+
+    /* Адаптивные стили для мобильных и планшетов */
+    @media (max-width: 768px) {
+        .team-cards-container {
+            justify-content: flex-start; /* Выравниваем карточки по левому краю */
+            overflow-x: scroll; /* Включаем горизонтальную прокрутку на маленьких экранах */
+        }
+
+        .team-card {
+            width: 150px; /* Уменьшаем ширину карточек для мобильных */
+        }
+    }
+
+    /* Для экранов больше 768px */
+    @media (min-width: 769px) {
+        .team-card {
+            width: 200px; /* Ширина карточек для больших экранов */
+            margin-right: 20px; /* Отступ справа */
+        }
+    }
+
+    /* Стиль для модальных окон */
+    .modal-content {
+        padding: 20px;
+    }
+
+    /* Изменения для фото в модальном окне */
+    .modal-body .team-photo {
+        width: 200px; /* Увеличиваем фото в модальном окне */
+        height: 250px; /* Прямоугольное фото */
+        margin: 0 auto 20px; /* Отступы и выравнивание по центру */
+        border-radius: 10px; /* Оставляем скругление для прямоугольного фото */
+        overflow: hidden;
+    }
+
+    .modal-body .team-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Заполнение контейнера с сохранением пропорций */
+    }
+</style>
+
+<div class="hero">
+    <img class="course-image img-fluid" src="{{ MEDIA_URL }}/media/images/001.jpg" alt="Изображение платформы">
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 section-title">О платформе</h2>
+    <p class="lead text-center section-text">Мы — команда энтузиастов, стремящихся сделать обучение доступным и
+        увлекательным для всех. Платформа, где вы можете не только учиться, но и весело проводить время. Мы уверены, что
+        обучение не должно быть скучным!</p>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h4 class="subsection-title">Наша миссия</h4>
+            <p class="section-text">Мы создали платформу, где каждый, кто хочет изучать программирование, может найти
+                качественные материалы и пройти путь от новичка до профессионала. И, конечно, научиться шутить про баги
+                и ошибки.</p>
+        </div>
+        <div class="col-md-6">
+            <h4 class="subsection-title">Что мы предлагаем</h4>
+            <ul class="section-text">
+                <li>Практические задания с реальными примерами.</li>
+                <li>Поддержка наставников.</li>
+                <li>Интерактивные курсы с видеоматериалами.</li>
+                <li>Неограниченный доступ к актуальным курсам.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3 class="text-center section-title">Наша команда</h3>
+            <div class="team-cards-container">
+                <!-- Карточка 1 -->
+                <div class="team-card shadow-sm text-center" data-toggle="modal" data-target="#modalAleksey">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/aleksey.jpg" class="card-img-top" alt="Алексей">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Алексей</h5>
+                        <p class="card-profession">Python разработчик</p>
+                    </div>
+                </div>
+
+                <!-- Карточка 2 -->
+                <div class="team-card shadow-sm text-center" data-toggle="modal" data-target="#modalElizaveta">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/elizaveta.jpg" class="card-img-top" alt="Елизавета">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Елизавета</h5>
+                        <p class="card-profession">Системный аналитик</p>
+                    </div>
+                </div>
+
+                <!-- Карточка 1 -->
+                <div class="team-card shadow-sm text-center" data-toggle="modal" data-target="#modalFenya">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/fenya.jpg" class="card-img-top" alt="Кот Феня">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Кот Феня</h5>
+                        <p class="card-profession">Ленивый комок</p>
+                    </div>
+                </div>
+
+                <!-- Карточка 2 -->
+                <div class="team-card shadow-sm text-center" data-toggle="modal" data-target="#modalOppi">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/oppi.jpg" class="card-img-top" alt="Песель Оппи">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Песель Оппи</h5>
+                        <p class="card-profession">Универсальный пылесос</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="text-center" style="color: #5f6366;">Удивительные возможности</h3>
+        <div class="row text-center mt-4">
+            <div class="col-md-4">
+                <div class="fact-box" style="background-color: #f4f4f4; border-radius: 10px; padding: 20px;">
+                    <i class="fas fa-laptop-code fa-3x text-primary mb-3 icon-resize"></i>
+                    <h4>Поддержка в реальном времени</h4>
+                    <p style="color: #4f5b62;">Наши наставники всегда на связи! Пишите, если возникнут вопросы. Мы
+                        поможем
+                        вам справиться с любыми трудностями, даже если вам нужно объяснение вашего кода на понятном
+                        языке.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="fact-box" style="background-color: #f4f4f4; border-radius: 10px; padding: 20px;">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3 icon-resize"></i>
+                    <h4>Курсы с реальными примерами</h4>
+                    <p style="color: #4f5b62;">Наши курсы основываются на реальных проектах и задачах, с которыми вы
+                        столкнетесь в реальной жизни. Программирование не должно быть скучным, ведь это – искусство!</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="fact-box" style="background-color: #f4f4f4; border-radius: 10px; padding: 20px;">
+                    <i class="fas fa-users fa-3x text-primary mb-3 icon-resize"></i>
+                    <h4>Комьюнити студентов</h4>
+                    <p style="color: #4f5b62;">Присоединяйтесь к сообществу студентов и преподавателей, которые всегда
+                        готовы помочь друг другу. Здесь каждый может получить поддержку и найти единомышленников!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна для участников команды -->
+    <!-- Модальное окно для Алексея -->
+    <div class="modal fade" id="modalAleksey" tabindex="-1" role="dialog" aria-labelledby="modalAlekseyLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAlekseyLabel">Алексей</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/aleksey.jpg" class="card-img-top" alt="Алексей">
+                    </div>
+                    <p>Алексей — Python разработчик, специализируется на создании веб-приложений. Он всегда рад помочь с
+                        кодом и обучением. В свободное время любит читать и заниматься спортом.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для Елизаветы -->
+    <div class="modal fade" id="modalElizaveta" tabindex="-1" role="dialog" aria-labelledby="modalElizavetaLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalElizavetaLabel">Елизавета</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/elizaveta.jpg" class="card-img-top" alt="Елизавета">
+                    </div>
+                    <p>Елизавета — системный аналитик, который помогает в проектировании и оптимизации бизнес-процессов.
+                        Она
+                        всегда готова поделиться опытом в области аналитики и разработки.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalFenya" tabindex="-1" role="dialog" aria-labelledby="modalFenyaLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFenyaLabel">Кот Феня</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/fenya.jpg" class="card-img-top" alt="Кот Феня">
+                    </div>
+                    <p>Кот Феня — мастер ловли солнечных лучей и профессионал по имитации камня на окне. Он всё видит,
+                        но делает вид, что игнорирует, чтобы создать ауру загадочности. Его утренние зарядки — это
+                        элегантное растягивание в самых неожиданных позах, как если бы он был йогом на пенсии. Вечером
+                        Феня превращается в ночного стража, охраняющего холодильник от вторжений.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для Песеля Оппи -->
+    <div class="modal fade" id="modalOppi" tabindex="-1" role="dialog" aria-labelledby="modalOppiLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalOppiLabel">Песель Оппи</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="team-photo">
+                        <img src="{{ MEDIA_URL }}/media/images/oppi.jpg" class="card-img-top" alt="Песель Оппи">
+                    </div>
+                    <p>Пёсель Оппи — верный охранник с безудержной любовью к еде и погоням за тенями. Он уверен, что
+                        каждое движение в доме — это либо опасность, либо шанс поиграть. Его взгляд, когда он видит
+                        мячик или игрушку, можно сравнить с взглядом голливудской звезды, увидевшей свой автограф на
+                        билете в кино. Оппи — это маленький комок энергии, который считает, что нужно охранять каждую
+                        ногу в доме, даже если они просто проходят мимо.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Блок "Присоединиться к нам" -->
+    <div class="join-us">
+        <h3>Присоединяйтесь к нам!</h3>
+        <p>Мы всегда рады новым участникам и готовы поддержать вас на пути к успеху. Пройдите обучение и станьте частью
+            нашей команды!</p>
+        {% if user.is_authenticated %}
+        <a href="/courses/" class="btn btn-lg">Выбрать курс</a>
+        {% else %}
+        <a href="/accounts/login" class="btn btn-lg">Присоединиться</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

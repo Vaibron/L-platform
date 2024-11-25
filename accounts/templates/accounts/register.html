@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .auth-box {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .auth-title {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 1.75rem;
+    }
+
+    .auth-form {
+        width: 100%;
+    }
+
+    .auth-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .auth-form input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+    }
+
+    .auth-form .btn-primary {
+        width: 100%;
+        background-color: #00796b;
+        color: white;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .auth-form .btn-primary:hover {
+        background-color: #004d40;
+    }
+
+    .auth-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .auth-link a {
+        color: #00796b;
+        font-size: 1rem;
+    }
+
+    .auth-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-box">
+        <h2 class="auth-title">Регистрация</h2>
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Логин</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Электронная почта</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="password_confirm">Подтвердите пароль</label>
+                <input type="password" id="password_confirm" name="password_confirm" required>
+            </div>
+            <button type="submit" class="btn-primary">Зарегистрироваться</button>
+        </form>
+        <div class="auth-link">
+            <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

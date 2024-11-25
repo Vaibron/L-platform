@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }} - Урок курса {{ course.title }}</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.5.1/styles/atom-one-light.min.css">
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F7FAFC;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-grow: 1;
+            transition: margin-left 0.5s ease;
+            width: 100%;
+        }
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #2D3748;
+            color: #E2E8F0;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease, width 0.5s ease;
+            z-index: 10;
+            width: 250px;
+            transform: translateX(-95%);
+            overflow: auto;
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        #sidebar.fixed {
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            transform: translateX(0);
+            top: 0;
+        }
+
+        .hover-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 60px; /* Увеличьте ширину области */
+            height: 100%;
+            z-index: 9;
+        }
+
+        .lesson-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            transition: margin-left 0.5s ease;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .lesson-content.with-sidebar {
+            margin-left: 250px;
+        }
+
+        .lesson-content.sidebar-hidden {
+            margin-left: 0;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 80%;
+                transform: translateX(-98%);
+            }
+
+            #sidebar.active {
+                transform: translateX(0);
+            }
+
+            .lesson-content {
+                margin-left: 0;
+                padding: 10px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Увеличиваем размер шрифта для всех элементов боковой панели */
+            #sidebar h2,
+            #sidebar ul li h3,
+            #sidebar ul li a {
+                font-size: 25px !important; /* Увеличиваем размер текста и используем !important */
+                margin-left: 10px; /* Сдвигаем элементы вправо */
+            }
+
+            /* Увеличиваем размер текста для ссылок */
+            #sidebar ul li a {
+                font-size: 20px !important; /* Увеличиваем размер текста для ссылок */
+            }
+
+            /* Увеличиваем размер шрифта для заголовков */
+            #sidebar h2 {
+                font-size: 30px !important;
+                margin-left: 0px;
+            }
+
+            #sidebar button {
+                display: none;
+            }
+        }
+
+        .toggle-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            color: #E2E8F0;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            z-index: 15;
+        }
+
+        .toggle-button.active {
+            color: #4CAF50;
+        }
+
+        .toggle-button:hover {
+            color: #FFEB3B;
+        }
+
+        .markdown {
+            width: 100%;
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+        }
+
+        h1, h2, h3 {
+            font-weight: normal;
+            color: #2D3748;
+            margin-bottom: 20px;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #4A5568;
+            margin-bottom: 10px;
+        }
+
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0px; /* Убираем излишние отступы, но добавляем для удобства */
+            margin: 0px; /* Отступы сверху и снизу */
+            overflow: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5f5;
+            padding: 2px 4px;
+            border-radius: 4px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            box-sizing: border-box;
+            max-width: 100%; /* Убираем ограничение на ширину, чтобы код мог растягиваться по ширине контейнера */
+            display: inline-block;
+        }
+
+        #sidebar h2 {
+            font-size: 18px;
+            font-weight: normal;
+            margin-bottom: 15px;
+            color: #CBD5E0;
+        }
+
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        #sidebar ul li h3 {
+            font-weight: normal;
+            font-size: 16px;
+            color: #E2E8F0;
+            padding: 5px 0;
+            margin: 5px 0;
+        }
+
+        #sidebar ul li ul li {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            padding-left: 15px;
+        }
+
+        #sidebar ul li ul li a {
+            text-decoration: none;
+            color: #A0AEC0;
+            font-size: 15px;
+            padding: 8px 10px;
+            display: block; /* Важно */
+            transition: background-color 0.3s;
+            border-radius: 4px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            width: 100%; /* Растягивает по всей строке */
+            box-sizing: border-box; /* Для корректных отступов */
+        }
+
+        #sidebar ul li ul li::before {
+            content: "•";
+            font-size: 18px;
+            margin-right: 10px;
+            color: #A0AEC0;
+        }
+
+        #sidebar ul li ul li a:hover {
+            background-color: #4A5568;
+            color: #E2E8F0;
+        }
+
+        .video-container {
+            width: 90%;
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-container::before {
+            content: "";
+            display: block;
+            padding-top: 56.25%;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+
+        @media (max-width: 768px) {
+            .video-container {
+                width: 100%;
+                padding: 5px;
+            }
+
+            .video-container iframe {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            font-size: 36px;
+            font-weight: 500;
+            margin-top: 40px;
+            color: #2D3748;
+        }
+
+        /* Устройства с шириной от 540px до 768px */
+        @media (min-width: 540px) and (max-width: 768px) {
+            #sidebar {
+                width: 50%; /* Более узкая ширина панели */
+                padding: 15px; /* Уменьшение внутреннего отступа */
+            }
+
+            #sidebar ul li ul li a {
+                width: 100%; /* Растягиваем ссылку на всю ширину */
+                box-sizing: border-box; /* Чтобы отступы не уменьшали ширину */
+            }
+
+            #sidebar h2,
+            #sidebar ul li h3,
+            #sidebar ul li a {
+                text-align: left; /* Выровняем текст по левому краю */
+                font-size: 18px; /* Оптимизация размера текста */
+                margin-left: 10px; /* Отступ слева */
+            }
+        }
+
+        /* Для устройств с шириной 540px (например, Surface Duo) */
+        @media (max-width: 540px) {
+            #sidebar {
+                width: 70%; /* Более узкая панель */
+                padding: 10px; /* Уменьшаем отступы */
+            }
+
+            #sidebar ul li ul li a {
+                width: 100%; /* Растягиваем ссылку на всю ширину */
+                box-sizing: border-box; /* Чтобы отступы не уменьшали ширину */
+            }
+
+            #sidebar h2,
+            #sidebar ul li h3,
+            #sidebar ul li a {
+                font-size: 16px; /* Оптимальный размер текста */
+                text-align: left; /* Выровняем текст по левому краю */
+                margin-left: 10px; /* Добавим отступ слева */
+            }
+        }
+
+
+        /* Стили для кнопок "Предыдущий урок" и "Следующий урок" */
+        .button-container {
+            display: flex;
+            justify-content: flex-end; /* Выравнивание кнопок по правому краю */
+            gap: 20px; /* Добавляет промежуток между кнопками */
+            margin-top: 20px;
+        }
+
+        /* Стили для обычных кнопок */
+        .button-container button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            background-color: #4A5568; /* Серый цвет */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .button-container button:hover {
+            background-color: #2D3748; /* Темный серый цвет */
+            transform: translateY(-2px);
+        }
+
+        .button-container button:active {
+            background-color: #4A5568; /* Темный серый цвет при клике */
+            transform: translateY(2px);
+        }
+
+        /* Кнопка "Вернуться" */
+        .return-button {
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #fff;
+            background-color: #4A5568; /* Серый цвет */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: fit-content; /* Ограничиваем ширину кнопки её содержимым */
+            display: inline-block; /* Предотвращает растягивание */
+        }
+
+        .return-button:hover {
+            background-color: #2D3748; /* Темно-серый цвет */
+            transform: translateY(-2px);
+        }
+
+        .return-button:active {
+            background-color: #4A5568;
+            transform: translateY(2px);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="hover-area" onmouseenter="showSidebar()"></div>
+
+    <div id="sidebar" onmouseleave="hideSidebar()">
+        <h2>Темы курса</h2>
+        <ul>
+            {% for topic in course.topics.all %}
+            <li>
+                <h3>{{ topic.title }}</h3>
+                <ul>
+                    {% for lesson_in_topic in topic.lessons.all %}
+                    <li>
+                        <a href="{% url 'single_lesson' lesson_in_topic.id %}">{{ lesson_in_topic.title }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+        <button id="toggleSidebarBtn" class="toggle-button" onclick="toggleSidebarFixed()">
+            <span class="material-icons">push_pin</span>
+        </button>
+    </div>
+
+    <div class="lesson-content">
+        <div class="button-container">
+            <button class="return-button" onclick="window.location.href='{% url 'single_course' course.id %}'">
+                Вернуться
+            </button>
+        </div>
+        <h1>{{ lesson.title }}</h1>
+        {% if lesson.video_code %}
+        <div class="video-container">
+            {{ lesson.video_code|safe }}
+        </div>
+        {% endif %}
+        <div class="markdown" id="lessonContent">{{ lesson_content_html|safe }}</div>
+        <div class="button-container">
+            {% if previous_lesson %}
+            <button class="back-button" onclick="window.location.href='{% url 'single_lesson' previous_lesson.id %}'">
+                Предыдущий урок
+            </button>
+            {% endif %}
+            {% if next_lesson %}
+            <button class="next-button" onclick="window.location.href='{% url 'single_lesson' next_lesson.id %}'">
+                Следующий урок
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Инициализация highlight.js для подсветки синтаксиса
+        hljs.highlightAll();
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+        const content = document.querySelector('.lesson-content');
+        content.classList.toggle('with-sidebar');
+    }
+
+    const sidebar = document.getElementById('sidebar');
+    const lessonContent = document.querySelector('.lesson-content');
+    const toggleButton = document.getElementById('toggleSidebarBtn');
+    let isSidebarVisible = false;
+
+    // Устанавливаем начальное состояние из localStorage
+    if (localStorage.getItem('sidebarFixed') === 'true') {
+        sidebar.classList.add('fixed');
+        lessonContent.classList.add('with-sidebar');
+        toggleButton.classList.add('active');
+    }
+
+    function showSidebar() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.add('active');
+        }
+    }
+
+    function hideSidebar() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('active');
+        }
+    }
+
+    let startX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        const currentX = e.touches[0].clientX;
+        const diffX = currentX - startX;
+
+        if (diffX > 50) {
+            sidebar.classList.add('active');
+            isSidebarVisible = true;
+        } else if (diffX < -50 && isSidebarVisible) {
+            sidebar.classList.remove('active');
+            isSidebarVisible = false;
+        }
+    });
+
+    function toggleSidebarFixed() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.toggle('fixed');
+            toggleButton.classList.toggle('active');
+
+            if (sidebar.classList.contains('fixed')) {
+                lessonContent.classList.add('with-sidebar');
+                localStorage.setItem('sidebarFixed', 'true');
+            } else {
+                lessonContent.classList.remove('with-sidebar');
+                localStorage.setItem('sidebarFixed', 'false');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
