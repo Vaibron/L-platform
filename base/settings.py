@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-m%$ms$rxnxd5qjr0+-wf(8%5u7$_+t0!9a@ud9pl+6ymkirwus
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -137,5 +137,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/accounts/profile/'  # Перенаправление на личный кабинет
 LOGOUT_REDIRECT_URL = '/'  # Перенаправление на главную страницу после выхода
-
-LOGOUT_REDIRECT_URL = '/'  # Перенаправление на главную страницу или на другую страницу
