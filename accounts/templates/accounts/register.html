@@ -71,6 +71,11 @@
     .auth-link a:hover {
         text-decoration: underline;
     }
+
+    .errors {
+        color: red;
+        font-size: 0.875rem;
+    }
 </style>
 
 <div class="auth-container">
@@ -78,22 +83,55 @@
         <h2 class="auth-title">Регистрация</h2>
         <form method="POST" class="auth-form">
             {% csrf_token %}
+
             <div class="form-group">
                 <label for="username">Логин</label>
-                <input type="text" id="username" name="username" required>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="errors">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+
             <div class="form-group">
                 <label for="email">Электронная почта</label>
-                <input type="email" id="email" name="email" required>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="errors">
+                        {% for error in form.email.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+
             <div class="form-group">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" required>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="errors">
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+
             <div class="form-group">
                 <label for="password_confirm">Подтвердите пароль</label>
-                <input type="password" id="password_confirm" name="password_confirm" required>
+                {{ form.password_confirm }}
+                {% if form.password_confirm.errors %}
+                    <div class="errors">
+                        {% for error in form.password_confirm.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
+
             <button type="submit" class="btn-primary">Зарегистрироваться</button>
         </form>
         <div class="auth-link">

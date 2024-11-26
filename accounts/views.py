@@ -35,6 +35,9 @@ def register_view(request):
         if form.is_valid():
             form.save()  # Сохраняем пользователя с хешированным паролем
             return redirect('login')  # Перенаправляем на страницу входа
+        else:
+            # Форма невалидна, возвращаем её с ошибками
+            return render(request, 'accounts/register.html', {'form': form})
     else:
         form = RegisterForm()
 
