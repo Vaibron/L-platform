@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_interface',
+    'colorfield',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -108,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -137,3 +138,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/accounts/profile/'  # Перенаправление на личный кабинет
 LOGOUT_REDIRECT_URL = '/'  # Перенаправление на главную страницу после выхода
+
+LANGUAGE_CODE = 'ru'  # Устанавливаем русский язык по умолчанию
+
+LANGUAGES = [
+    ('ru', 'Русский'),  # Русский язык
+    ('en', 'English'),  # Английский язык
+]
