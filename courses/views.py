@@ -1,4 +1,7 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
+
+from .forms import CommentForm
 from .models import Course, Topic, Lesson
 import markdown
 from django.utils.safestring import mark_safe
@@ -13,8 +16,32 @@ def course_main_page(request):
 
 def single_course(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
+
+    # Обработка комментария
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user  # Сохраняем пользователя, который оставил комментарий
+            comment.course = course  # Привязываем комментарий к курсу
+            comment.save()
+            return redirect('single_course',
+                            course_id=course.id)  # Перезагружаем страницу курса после сохранения комментария
+    else:
+        form = CommentForm()
+
+    # Получаем все комментарии к курсу
+    comments_list = course.comments.all()
+
+    # Пагинация: показываем по 5 комментариев на странице
+    paginator = Paginator(comments_list, 5)  # 5 комментариев на странице
+    page_number = request.GET.get('page')  # Получаем номер страницы из GET параметров
+    page_obj = paginator.get_page(page_number)  # Получаем объект страницы
+
     context = {
         'course': course,
+        'form': form,
+        'page_obj': page_obj,  # Передаем объект страницы в контекст
     }
     return render(request, 'single_course.html', context)
 
