@@ -25,6 +25,12 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = (CourseFilter,)  # Добавляем фильтр по курсу
 
 
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_available', 'allow_comments', 'show_comments')
+    list_filter = ('is_available', 'allow_comments', 'show_comments')
+    search_fields = ('title', 'description')
+
+
 # Класс для админки тем
 class TopicAdmin(admin.ModelAdmin):
     list_display = ('course', 'title', 'order')  # Добавляем отображение поля order
@@ -42,7 +48,7 @@ class LessonAdmin(admin.ModelAdmin):
 
 
 # Регистрируем модели
-admin.site.register(models.Course)
+admin.site.register(models.Course, CourseAdmin)
 admin.site.register(models.Comment, CommentAdmin)  # Регистрируем модель комментариев с фильтром
 admin.site.register(models.Lesson, LessonAdmin)  # Регистрируем модель уроков с отображением поля order
 admin.site.register(models.Topic, TopicAdmin)  # Регистрируем модель тем с отображением поля order

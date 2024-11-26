@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -14,38 +15,7 @@ def course_main_page(request):
     return render(request, 'courses.html', context)
 
 
-def single_course(request, course_id):
-    course = get_object_or_404(Course, pk=course_id)
-
-    # Обработка комментария
-    if request.method == 'POST' and request.user.is_authenticated:
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.user = request.user  # Сохраняем пользователя, который оставил комментарий
-            comment.course = course  # Привязываем комментарий к курсу
-            comment.save()
-            return redirect('single_course',
-                            course_id=course.id)  # Перезагружаем страницу курса после сохранения комментария
-    else:
-        form = CommentForm()
-
-    # Получаем все комментарии к курсу
-    comments_list = course.comments.all()
-
-    # Пагинация: показываем по 5 комментариев на странице
-    paginator = Paginator(comments_list, 5)  # 5 комментариев на странице
-    page_number = request.GET.get('page')  # Получаем номер страницы из GET параметров
-    page_obj = paginator.get_page(page_number)  # Получаем объект страницы
-
-    context = {
-        'course': course,
-        'form': form,
-        'page_obj': page_obj,  # Передаем объект страницы в контекст
-    }
-    return render(request, 'single_course.html', context)
-
-
+@login_required
 def start_course(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
 
@@ -100,3 +70,38 @@ def single_lesson(request, lesson_id):
         'lesson_content_html': lesson_content_html,
     }
     return render(request, 'course_area.html', context)
+
+
+###############################################################
+"""Обрабатывает добавление комментария."""
+
+
+def single_course(request, course_id):
+    # Получаем объект курса или возвращаем 404
+    course = get_object_or_404(Course, pk=course_id)
+
+    # Обрабатываем форму комментария
+    if request.method == 'POST' and request.user.is_authenticated:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            # Сохраняем комментарий
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.course = course
+            comment.save()
+
+            # Перенаправляем пользователя на ту же страницу (PRG паттерн)
+            return redirect('single_course', course_id=course.id)
+    else:
+        form = CommentForm()
+
+    # Получаем только 10 последних комментариев
+    comments = course.comments.all().order_by('-created_at')[:10]
+
+    # Передаём данные в шаблон
+    context = {
+        'course': course,
+        'form': form,
+        'comments': comments,
+    }
+    return render(request, 'single_course.html', context)

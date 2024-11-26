@@ -13,6 +13,8 @@ class Course(models.Model):
     difficulty_level = models.CharField(max_length=100, default='Не указан', verbose_name='Уровень сложности')
     is_available = models.BooleanField(default=False, verbose_name='Курс доступен')
     is_content_available = models.BooleanField(default=True, verbose_name='Содержание доступно')
+    allow_comments = models.BooleanField(default=True, verbose_name='Разрешить комментарии')
+    show_comments = models.BooleanField(default=True, verbose_name='Показывать комментарии')
 
     def __str__(self):
         return f'{self.title}'
@@ -78,4 +80,3 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ['created_at']
-
