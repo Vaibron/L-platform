@@ -1,20 +1,22 @@
 from django.contrib import admin
 from . import models
 
-
 class CourseFilter(admin.SimpleListFilter):
     title = 'курс'  # Название фильтра
     parameter_name = 'course'  # Параметр в URL
 
     def lookups(self, request, model_admin):
-        # Получаем все курсы, для которых есть комментарии
+        # Получаем все курсы
         courses = models.Course.objects.all()
         return [(course.id, course.title) for course in courses]
 
     def queryset(self, request, queryset):
-        # Если фильтр выбран, показываем только комментарии для этого курса
+        # Если фильтр выбран, показываем только объекты, связанные с этим курсом
         if self.value():
-            return queryset.filter(course_id=self.value())
+            if hasattr(queryset.model, 'topic'):  # Проверяем, есть ли у модели связь с темами
+                return queryset.filter(topic__course_id=self.value())  # Фильтруем через тему
+            elif hasattr(queryset.model, 'course'):  # Проверяем, есть ли у модели связь с курсом напрямую
+                return queryset.filter(course_id=self.value())  # Фильтруем напрямую по курсу
         return queryset
 
 
@@ -25,8 +27,9 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = (CourseFilter,)  # Добавляем фильтр по курсу
 
 
+# Класс для админки курсов
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('title', 'is_available', 'allow_comments', 'show_comments')
+    list_display = ('title', 'is_available','is_content_available', 'allow_comments', 'show_comments')
     list_filter = ('is_available', 'allow_comments', 'show_comments')
     search_fields = ('title', 'description')
 
@@ -43,7 +46,7 @@ class TopicAdmin(admin.ModelAdmin):
 class LessonAdmin(admin.ModelAdmin):
     list_display = ('topic', 'title', 'order')  # Добавляем отображение поля order
     search_fields = ('title',)  # Поиск по названию урока
-    list_filter = ('topic',)  # Фильтрация по теме
+    list_filter = (CourseFilter,)  # Добавляем фильтр по курсу
     ordering = ('topic__course', 'topic__order', 'order')  # Сортировка по курсу темы, порядку темы и порядку урока
 
 
