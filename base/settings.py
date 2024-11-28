@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-m%$ms$rxnxd5qjr0+-wf(8%5u7$_+t0!9a@ud9pl+6ymkirwus
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.1.37','192.168.31.52']
 
 # Application definition
 
@@ -126,6 +126,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+# Папка, куда Django будет собирать все статические файлы
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Папка для хранения медиафайлов (изображений)
 MEDIA_URL = ('/media/')
