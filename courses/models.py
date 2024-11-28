@@ -80,3 +80,13 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ['created_at']
+
+
+class CourseProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    last_lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, null=True, blank=True)
+    progress = models.FloatField(default=0.0)  # Процент завершения курса, можно использовать по желанию
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course.title}"
